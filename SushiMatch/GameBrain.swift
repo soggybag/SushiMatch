@@ -32,7 +32,6 @@ class GameBrain: NSObject, TileGridDelegate {
     // MARK: TileGrid Delegate 
     
     func tileTouched(row: Int, col: Int) {
-        print("Game Brain says tile touched \(row) \(col)")
         let tile = tileArray[row][col]
         
         tile.tileType = nextTileToPlace
@@ -57,25 +56,18 @@ class GameBrain: NSObject, TileGridDelegate {
     
     
     func checkMatchForTileAtRow(row: Int, col: Int) {
-        print("Start Check...")
         matchesArray.removeAll()
-         print("-----------------------")
         checkMatchForGameSquare(tileArray[row][col])
-        print("Check complete")
-        print(matchesArray.count)
         if matchesArray.count > 2 {
             for square in matchesArray {
                 square.tileType = .one
             }
-            
             tileGrid.setTiles(tileArray)
         }
     }
     
     
     func checkMatchForGameSquare(gameSquare: GameSquare) {
-        print("Checking \(gameSquare.row) \(gameSquare.col)")
-        
         let l: (row: Int, col: Int) = (row: 0, col: -1)
         let t: (row: Int, col: Int) = (row: -1, col: 0)
         let r: (row: Int, col: Int) = (row: 0, col: 1)
@@ -90,19 +82,18 @@ class GameBrain: NSObject, TileGridDelegate {
         for i in ltrb {
             let checkRow = gameSquare.row + i.row
             let checkCol = gameSquare.col + i.col
-            if checkRow > 0 && checkCol > 0 && checkRow < rows && checkCol < cols {
+            
+            // print("> Checking \(i) \(checkRow) \(checkCol)")
+            
+            if checkRow >= 0 && checkCol >= 0 && checkRow < rows && checkCol < cols {
+                // print("This square is on the board")
                 let adjacentSquare = tileArray[checkRow][checkCol]
-                
-                print("Adjacent squares")
-                print("Row: \(adjacentSquare.row) Col: \(adjacentSquare.col)")
-                
                 // The adjacent square is the same type
                 if gameSquare.tileType == adjacentSquare.tileType {
                     // This square has not been found
                     if !matchesArray.contains(adjacentSquare) {
                         checkMatchForGameSquare(adjacentSquare)
                     }
-                    
                 }
             }
         }

@@ -32,7 +32,6 @@ class TileGrid: SKSpriteNode, SushiTileDelegate {
     func setTiles(squaresArray: [[GameSquare]]) {
         for rowArray in squaresArray {
             for square in rowArray {
-                print(square)
                 tileArray[square.row][square.col].tileType = square.tileType
             }
         }
