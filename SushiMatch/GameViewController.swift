@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import QuartzCore
+// import QuartzCore
 import SceneKit
 import SpriteKit
 import GameplayKit

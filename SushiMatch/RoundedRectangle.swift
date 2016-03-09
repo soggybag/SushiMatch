@@ -13,6 +13,7 @@ class RoundedRectangle: SKShapeNode {
 
     init(size: CGSize, radius: CGFloat) {
         super.init()
+       
         let rect = CGRect(x: size.width / -2, y: size.height / -2, width: size.width, height: size.height)
         path = CGPathCreateWithRoundedRect(rect, radius, radius, nil)
         fillColor = UIColor(white: 1, alpha: 0.75)

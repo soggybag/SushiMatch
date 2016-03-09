@@ -10,20 +10,28 @@ import Foundation
 
 class GameBrain: NSObject, TileGridDelegate {
     
+    // How Many tiles
+    
+    let cols = 6
+    let rows = 6
+    
     var currentTile: CurrentTile!
     var tileGrid: TileGrid!
     var nextTileToPlace: TileType!
     var matchesArray = [GameSquare]()
     
-    let cols = 6
-    let rows = 6
-    
+    // GameSquares map out the contents of the board
     var tileArray = [[GameSquare]]()
     
+    
+    
+    
+    // Mark Game Functions 
     
     // Get the next Tile to place 
     
     func getNextTileToPlace() {
+        // TODO: Change random to weighted
         nextTileToPlace = TileType.randomTile()
         currentTile.nextTile(nextTileToPlace)
     }
@@ -38,10 +46,11 @@ class GameBrain: NSObject, TileGridDelegate {
         tileGrid.setTiles(tileArray)
         
         getNextTileToPlace()
-        
         checkMatchForTileAtRow(row, col: col)
     }
     
+    
+    // Mark: Setup 
     
     func makeGameSquares() {
         for row in 0..<rows {
@@ -57,12 +66,32 @@ class GameBrain: NSObject, TileGridDelegate {
     
     func checkMatchForTileAtRow(row: Int, col: Int) {
         matchesArray.removeAll()
+        
+        // Check for matches recursively, populate matches array with matched squares
         checkMatchForGameSquare(tileArray[row][col])
+        
+        // TODO: Need to check the board after a match has occurred for a match with the
+        
+        // Look at the matches, more than 2 score!
         if matchesArray.count > 2 {
-            for square in matchesArray {
-                square.tileType = .one
+            // Clear the squares
+            for i in 1..<matchesArray.count {
+                matchesArray[i].tileType = .one
             }
+            // Get the first square and advance it.
+            let theSquare = matchesArray[0]
+            let theType = theSquare.tileType
+            if let nextType = theType.nextTile() {
+                print("Matching tile")
+                print("Current type \(theType) next type \(nextType)")
+                tileArray[row][col].tileType = nextType
+            }
+            
+            // Check again in case a new match has been created by the new tile
+            checkMatchForTileAtRow(row, col: col)
+            
             tileGrid.setTiles(tileArray)
+                
         }
     }
     
@@ -104,10 +133,8 @@ class GameBrain: NSObject, TileGridDelegate {
         super.init()
         
         self.nextTileToPlace = .two
-        
         self.currentTile = currentTile
         self.tileGrid = tileGrid
-        
         self.tileGrid.delegate = self
         
         makeGameSquares()
