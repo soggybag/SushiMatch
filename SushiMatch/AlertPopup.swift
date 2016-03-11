@@ -16,16 +16,26 @@ class AlertPopup: SKSpriteNode {
     let messageLabel: SKLabelNode!
     let closeButton: SKLabelNode!
     
+    var closeAction: Void -> Void
+    
     let boxSize = CGSize(width: 200, height: 200)
     
     
     func closePopup() {
-        print("Close popup")
-        
         // runAction move box
+        let hideBox = SKAction.moveToY(-100, duration: 1.0)
+        let hidebackground = SKAction.fadeAlphaTo(0, duration: 1.0)
+        let wait = SKAction.waitForDuration(1.0)
+        let completionBlock = SKAction.runBlock { () -> Void in
+            print("remove from parent")
+            self.closeAction()
+            self.removeFromParent()
+        }
+        let seq = SKAction.sequence([wait, completionBlock])
         // runAction Block removeFromParent
-        
-        removeFromParent()
+        box.runAction(hideBox)
+        background.runAction(hidebackground)
+        self.runAction(seq)
     }
     
     
@@ -49,9 +59,13 @@ class AlertPopup: SKSpriteNode {
     }
     
     
-    init(title: String?, message: String?, size: CGSize) {
+    init(title: String?, message: String?, size: CGSize, closeAction: Void -> Void) {
+        self.closeAction = closeAction
+        
         background = SKSpriteNode(texture: nil, color: UIColor(white: 0, alpha: 0.75), size: size)
         background.name = "background"
+        background.alpha = 0
+        
         box = RoundedRectangle(size: boxSize, radius: 20)
         titleLabel = SKLabelNode(text: title)
         messageLabel = SKLabelNode(text: message)
@@ -61,7 +75,7 @@ class AlertPopup: SKSpriteNode {
         background.position.y = size.height / 2
         
         box.position.x = size.width / 2
-        box.position.y = size.height / 2 // -box.frame.height / 2
+        box.position.y = 0 - box.frame.height // size.height //  / 2 // -box.frame.height / 2
         box.name = "box"
         
         titleLabel.position.y = 50
@@ -86,10 +100,12 @@ class AlertPopup: SKSpriteNode {
         box.addChild(messageLabel)
         box.addChild(closeButton)
         
-        let showBox = SKAction.moveToY(size.height / 2, duration: 0.4)
+        let showBox = SKAction.moveToY(size.height / 2, duration: 1.0)
         showBox.timingMode = .EaseOut
+        let showBackground = SKAction.fadeAlphaTo(1.0, duration: 1.0)
         
         box.runAction(showBox)
+        background.runAction(showBackground)
     }
     
     

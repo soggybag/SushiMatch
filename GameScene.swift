@@ -10,20 +10,18 @@ import UIKit
 import SpriteKit
 
 class GameScene: SKScene {
-    
     var brain: GameBrain!
     let background = SKSpriteNode(imageNamed: "background")
     var popButton: SKLabelNode!
     
     
-    
-    
     func showPopup() {
-        let popup = AlertPopup(title: "Alert!", message: "Hello World", size: frame.size)
+        let popup = AlertPopup(title: "Alert!", message: "Hello World", size: frame.size) { () -> Void in
+            print("Close box action run")
+        }
         
         popup.zPosition = 999
         addChild(popup)
-        
     }
     
     
@@ -46,7 +44,6 @@ class GameScene: SKScene {
         if popButton.containsPoint(location) {
             showPopup()
         }
-        
     }
     
     
